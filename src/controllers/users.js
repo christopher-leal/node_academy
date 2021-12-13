@@ -1,4 +1,5 @@
 const User = require('./../models/user')
+
 const getUsers = async (req, res) => {
   try {
     const users = await User.find()
@@ -7,7 +8,7 @@ const getUsers = async (req, res) => {
       data: users
     })
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error.message
     })
@@ -15,18 +16,51 @@ const getUsers = async (req, res) => {
 }
 
 const addUser = async (req, res) => {
-  console.log(req.body)
-  res.json({ success: true })
+  try {
+    const user = new User(req.body)
+    await user.save()
+    return res.status(201).json({
+      success: true,
+      data: user
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message
+    })
+  }
 }
 
 const patchUser = async (req, res) => {
-  console.log(req.body)
-  res.json({ success: true })
+  try {
+    const { id } = req.params
+    const users = await User.findByIdAndUpdate(id, req.body, { new: true })
+    return res.json({
+      success: true,
+      data: users
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message
+    })
+  }
 }
 
 const deleteUser = async (req, res) => {
-  console.log(req.body)
-  res.json({ success: true })
+  try {
+    const { id } = req.params
+    const users = await User.findByIdAndDelete(id)
+    return res.json({
+      success: true,
+      data: users
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message
+    })
+  }
 }
 
 module.exports = {
